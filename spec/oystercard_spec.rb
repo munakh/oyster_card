@@ -16,8 +16,9 @@ describe Oystercard do
     expect{ oystercard.top_up(1) }.to change{ oystercard.balance }.by 1
   end
 
-  # it 'raises error when more than £90 added' do
-  #
-  # end
+  it 'raises error when more than £90 added' do
+    oystercard.balance = 90
+    expect{ oystercard.top_up(1) }.to raise_error 'You have reached the £90 limit'
+  end
 
 end
