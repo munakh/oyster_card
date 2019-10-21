@@ -21,4 +21,8 @@ describe Oystercard do
     expect{ oystercard.top_up(1) }.to raise_error 'You have reached the £90 limit'
   end
 
+  it 'deducts money from card' do
+    expect{ oystercard.deduct(1) }.to change{ oystercard.balance }.by -1
+  end
+
 end
