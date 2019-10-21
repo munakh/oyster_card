@@ -25,4 +25,23 @@ describe Oystercard do
     expect{ oystercard.deduct(1) }.to change{ oystercard.balance }.by -1
   end
 
+  it 'can be used to touch in' do
+    expect(oystercard).to respond_to(:touch_in)
+  end
+
+  it 'is initially not in a journey' do
+    expect(oystercard.in_journey?).to be false
+  end
+
+  it 'starts journey when touched in' do
+    oystercard.touch_in
+    expect(oystercard.in_journey?).to be true
+  end
+
+  it 'ends journey when touched out' do
+    oystercard.touch_in
+    oystercard.touch_out
+    expect(oystercard.in_journey?).to be false
+  end
+
 end
