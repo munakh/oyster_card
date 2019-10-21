@@ -34,14 +34,21 @@ describe Oystercard do
   end
 
   it 'starts journey when touched in' do
+    oystercard.balance = 2
     oystercard.touch_in
     expect(oystercard.in_journey?).to be true
   end
 
   it 'ends journey when touched out' do
+    oystercard.balance = 2
     oystercard.touch_in
     oystercard.touch_out
     expect(oystercard.in_journey?).to be false
+  end
+
+  it 'raises error when trying to touch in with less than £1' do
+    oystercard.balance = 0.99
+    expect{ oystercard.touch_in }.to raise_error 'Insufficient funds to touch in'
   end
 
 end
