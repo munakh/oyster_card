@@ -17,12 +17,12 @@ describe Oystercard do
   end
 
   it 'raises error when more than £90 added' do
-    oystercard.balance = 90
+    oystercard.balance = Oystercard::MAX_LIMIT
     expect{ oystercard.top_up(1) }.to raise_error 'You have reached the £90 limit'
   end
 
   it 'deducts money from card' do
-    expect{ oystercard.deduct(1) }.to change{ oystercard.balance }.by -1
+    expect{ oystercard.touch_out }.to change{ oystercard.balance }.by -1
   end
 
   it 'can be used to touch in' do
@@ -33,22 +33,29 @@ describe Oystercard do
     expect(oystercard.in_journey?).to be false
   end
 
-  it 'starts journey when touched in' do
-    oystercard.balance = 2
-    oystercard.touch_in
-    expect(oystercard.in_journey?).to be true
+  context 'tests dependent on minimum limit' do
+    before do
+      expect(oystercard.balance).to be > Oystercard::MIN_LIMIT
+
+      it 'starts journey when touched in' do
+        expect{ oystercard.touch_in }.to change{ oystercard.in_journey? }.from(false).to(true)
+      end
+
+      it 'ends journey when touched out' do
+        expect{ oystercard.touch_out }.to change{ oystercard.in_journey? }.from(true).to(false)
+      end
+
+      it 'deducts the minimum amount when touched out' do
+        oystercard.touch_in
+        expect{ oystercard.touch_out }.to change{ oystercard.balance }.by(-Oystercard::MIN_CHARGE)
+      end
+    end
   end
 
-  it 'ends journey when touched out' do
-    oystercard.balance = 2
-    oystercard.touch_in
-    oystercard.touch_out
-    expect(oystercard.in_journey?).to be false
-  end
+
 
   it 'raises error when trying to touch in with less than £1' do
-    oystercard.balance = 0.99
+    oystercard.balance < Oystercard::MIN_LIMIT
     expect{ oystercard.touch_in }.to raise_error 'Insufficient funds to touch in'
   end
-
 end
