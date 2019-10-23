@@ -14,12 +14,17 @@ class Journey
 
   def touch_in(oystercard, station)
     raise 'Insufficient funds to touch in' if oystercard.balance < Oystercard::MIN_LIMIT
+    if in_journey? == true
+      pen_fare =  fare(@entry_station, @exit_station)
+      oystercard.deduct(pen_fare)
+    end
     @entry_station = station
   end
 
   def touch_out(oystercard, station)
-    oystercard.deduct(Oystercard::MIN_FARE)
     @exit_station = station
+    charge = fare(@entry_station, @exit_station)
+    oystercard.deduct(charge)
     journey
   end
 

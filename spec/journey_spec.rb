@@ -14,13 +14,13 @@ describe Journey do
     expect(journey).to respond_to(:touch_in)
   end
 
-  it 'deducts money from card upon touch out' do
-    expect{ journey.touch_out(oystercard, exit_station) }.to change{ oystercard.balance }.by -1
-  end
+  # it 'deducts money from card upon touch out' do
+  #   expect{ journey.touch_out(oystercard, exit_station) }.to change{ oystercard.balance }.by -1
+  # end
 
   context 'if it has minimum limit' do
     before do
-      oystercard.top_up(Oystercard::MIN_LIMIT)
+      oystercard.top_up(20)
     end
 
     it 'starts journey when touched in' do
@@ -40,6 +40,9 @@ describe Journey do
         expect{ journey.touch_out(oystercard, exit_station) }.to change{ oystercard.balance }.by(-Oystercard::MIN_FARE)
       end
 
+      it 'charges the penalty fare when touching in with an unresolved journey' do
+        expect {journey.touch_in(oystercard, entry_station)}.to change { oystercard.balance}.by(-(Oystercard::MIN_FARE*6))
+    end
       it 'stores the entry station' do
         expect(journey.entry_station).to eq entry_station
       end
@@ -69,5 +72,6 @@ describe Journey do
      expect(journey.fare(nil, nil)).to eq(Oystercard::MIN_FARE*6)
    end
  end
+
 
 end
