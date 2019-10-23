@@ -27,4 +27,12 @@ class Journey
     @journeys.store(@entry_station, @exit_station)
     @entry_station = nil
   end
+
+  def fare(start_station, finish_station)
+    if start_station != nil && finish_station != nil
+      fare = Oystercard::MIN_FARE
+    else
+      fare = Oystercard::MIN_FARE * 6
+    end
+  end
 end
